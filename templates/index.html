@@ -1,0 +1,13 @@
+<html>
+    <head>
+        <title>{{ page_title }}</title>
+    </head>
+    <body>
+        <h1>
+        {% if weather %}
+            Температура воздуха: {{ weather.temp_C }}, ощущается как {{ weather.FeelsLikeC }}
+        {% else %}
+            Сервис погоды недоступен.
+        {% endif %}
+    </body>
+</html>
