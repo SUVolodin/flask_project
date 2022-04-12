@@ -1,6 +1,6 @@
 from webapp import create_app
-from webapp.news.parsers import habr
+from webapp.python_news_org import get_python_news
 
 app = create_app()
 with app.app_context():
-    habr.get_habr_snippets()
+    get_python_news()
