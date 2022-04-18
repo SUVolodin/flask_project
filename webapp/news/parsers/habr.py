@@ -3,6 +3,9 @@ import locale
 import platform
 
 from bs4 import BeautifulSoup
+
+from webapp.db import db
+from webapp.news.models import News
 from webapp.news.parsers.utils import get_html, save_news
 
 if platform.system() == "Windows":
@@ -24,7 +27,7 @@ def parse_habr_date(date_str):
         return datetime.now()
 
 
-def get_habr_snippets():
+def get_news_snippets():
     html = get_html("https://habr.com/ru/search/?target_type=posts&q=python&order_by=date")
     if html:
         soup = BeautifulSoup(html, "html.parser")
@@ -35,3 +38,16 @@ def get_habr_snippets():
             published = news.find("span", class_="tm-article-snippet__datetime-published").text
             published = parse_habr_date(published)
             save_news(title, "https://habr.com" + url, published)
+
+
+def get_news_content():
+    news_without_text = News.query.filter(News.text.is_(None))
+    for news in news_without_text:
+        html = get_html(news.url)
+        if html:
+            soup = BeautifulSoup(html, "html.parser")
+            news_text = soup.find("div", class_="article-formatted-body").decode_contents()
+            if news_text:
+                news.text = news_text
+                db.session.add(news)
+                db.session.commit()
