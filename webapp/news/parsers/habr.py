@@ -10,6 +10,7 @@ if platform.system() == "Windows":
 else:
     locale.setlocale(locale.LC_TIME, "ru_RU")
 
+
 def parse_habr_date(date_str):
     if "сегодня" in date_str:
         today = datetime.now()
@@ -22,13 +23,14 @@ def parse_habr_date(date_str):
     except ValueError:
         return datetime.now()
 
+
 def get_habr_snippets():
     html = get_html("https://habr.com/ru/search/?target_type=posts&q=python&order_by=date")
     if html:
         soup = BeautifulSoup(html, "html.parser")
-        all_news = soup.find("div", class_="tm-sub-page__main").findAll("article", class_="tm-articles-list__item")
+        all_news = soup.find("div", class_="tm-sub-page__main").findAll("div", class_="tm-article-snippet")
         for news in all_news:
-            title = news.find("h2", class_="tm-article-snippet__title tm-article-snippet__title_h2").text
+            title = news.find("a", class_="tm-article-snippet__title-link").text
             url = news.find("a", class_="tm-article-snippet__title-link")["href"]
             published = news.find("span", class_="tm-article-snippet__datetime-published").text
             published = parse_habr_date(published)
