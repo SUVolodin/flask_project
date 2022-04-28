@@ -12,7 +12,7 @@ def weather_by_city(city_name):
         "lang": "ru"
     }
     try:
-        result = requests.get(weather_url, params = params)
+        result = requests.get(weather_url, params=params)
         result.raise_for_status()
         weather = result.json()
         if "data" in weather:
